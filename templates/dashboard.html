@@ -1,0 +1,241 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="airline-partners-section">
+    <div class="airline-partners-header">
+        <h2>Experience Flying with our Airline Partners</h2>
+        <p class="text-muted">Premium comfort, trusted service, and seamless connections worldwide.</p>
+    </div>
+    <div class="airline-grid">
+        <div class="airline-card" style="--airline-accent:#ff3e60;">
+            <div class="airline-card-content">
+                <span class="airline-name">AirAsia</span>
+                <span class="airline-tag">Low-cost, high-comfort</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/airasia.png') }}"
+                alt="AirAsia aircraft tail">
+        </div>
+        <div class="airline-card" style="--airline-accent:#d4a14d;">
+            <div class="airline-card-content">
+                <span class="airline-name">Etihad Airways</span>
+                <span class="airline-tag">Luxury redefined</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/etihad.png') }}"
+                alt="Etihad Airways aircraft tail">
+        </div>
+        <div class="airline-card" style="--airline-accent:#2b66d9;">
+            <div class="airline-card-content">
+                <span class="airline-name">Malaysia Airlines</span>
+                <span class="airline-tag">Warm Asian hospitality</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/malaysia.png') }}"
+                alt="Malaysia Airlines aircraft tail">
+        </div>
+        <div class="airline-card" style="--airline-accent:#cfa25e;">
+            <div class="airline-card-content">
+                <span class="airline-name">Emirates</span>
+                <span class="airline-tag">Elevated global travel</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/emirates.png') }}"
+                alt="Emirates aircraft tail">
+        </div>
+    </div>
+</section>
+
+<section class="quick-services">
+    <a class="service-card" href="{{ url_for('index') }}#airline-partners">
+        <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 12l18-6-6 6 6 6-18-6z"></path>
+            </svg>
+        </span>
+        <span class="service-label">Flights</span>
+    </a>
+    <a class="service-card" href="{{ url_for('index') }}#hotel-chains">
+        <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="4" width="6" height="16"></rect>
+                <rect x="14" y="8" width="6" height="12"></rect>
+            </svg>
+        </span>
+        <span class="service-label">Hotels</span>
+    </a>
+    <a class="service-card" href="{{ url_for('trains') }}">
+        <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 17h16"></path>
+                <rect x="6" y="4" width="12" height="9" rx="2"></rect>
+                <circle cx="8" cy="17" r="1.5"></circle>
+                <circle cx="16" cy="17" r="1.5"></circle>
+            </svg>
+        </span>
+        <span class="service-label">Trains</span>
+    </a>
+    <a class="service-card" href="{{ url_for('index') }}#featured-packages">
+        <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3l3 6 6 .8-4.5 4.4 1 6-5.5-3-5.5 3 1-6L3 9.8 9 9z"></path>
+            </svg>
+        </span>
+        <span class="service-label">Packages</span>
+    </a>
+    <a class="service-card" href="{{ url_for('buses') }}">
+        <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="4" width="14" height="10" rx="2"></rect>
+                <path d="M5 14h14"></path>
+                <circle cx="8" cy="18" r="1.5"></circle>
+                <circle cx="16" cy="18" r="1.5"></circle>
+            </svg>
+        </span>
+        <span class="service-label">Buses</span>
+    </a>
+    <a class="service-card" href="{{ url_for('cabs') }}">
+        <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="7" width="16" height="7" rx="2"></rect>
+                <path d="M6 14h12"></path>
+                <circle cx="8" cy="18" r="1.5"></circle>
+                <circle cx="16" cy="18" r="1.5"></circle>
+            </svg>
+        </span>
+        <span class="service-label">Cabs</span>
+    </a>
+</section>
+
+<div class="glass-card">
+    <h2 class="mb-4">My Bookings</h2>
+    {% if bookings %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 1rem;">Package</th>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 1rem;">Package</th>
+                <th style="text-align: left; padding: 1rem;">Date Booked</th>
+                <th style="text-align: left; padding: 1rem;">Members</th>
+                <th style="text-align: left; padding: 1rem;">Status</th>
+                <th style="text-align: left; padding: 1rem;">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem;">{{ booking.package.name }}</td>
+                <td style="padding: 1rem;">{{ booking.booking_date.strftime('%Y-%m-%d') }}</td>
+                <td style="padding: 1rem;">{{ booking.num_members }}</td>
+                <td style="padding: 1rem;">
+                    <span class="badge badge-success"
+                        style="background: #28a745; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                        {{ booking.status }}
+                    </span>
+                </td>
+                <td style="padding: 1rem;">₹{{ booking.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align: center; padding: 3rem 1rem;">
+        <p style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem;">
+            You haven't booked any trips yet.
+        </p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg"
+            style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+            Browse Packages
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="glass-card">
+    <h2 class="mb-4">Train Bookings</h2>
+    {% if train_bookings %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 1rem;">Route</th>
+                <th style="text-align: left; padding: 1rem;">Date</th>
+                <th style="text-align: left; padding: 1rem;">Class</th>
+                <th style="text-align: left; padding: 1rem;">Travellers</th>
+                <th style="text-align: left; padding: 1rem;">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in train_bookings %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem;">{{ booking.train.departure_city }} â†’ {{ booking.train.arrival_city }}</td>
+                <td style="padding: 1rem;">{{ booking.travel_date.strftime('%Y-%m-%d') }}</td>
+                <td style="padding: 1rem;">{{ booking.selected_class }}</td>
+                <td style="padding: 1rem;">{{ booking.num_travellers }}</td>
+                <td style="padding: 1rem;">₹{{ booking.final_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No train bookings yet.</p>
+    {% endif %}
+</div>
+
+<div class="glass-card">
+    <h2 class="mb-4">Bus Bookings</h2>
+    {% if bus_bookings %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 1rem;">Route</th>
+                <th style="text-align: left; padding: 1rem;">Date</th>
+                <th style="text-align: left; padding: 1rem;">Class</th>
+                <th style="text-align: left; padding: 1rem;">Travellers</th>
+                <th style="text-align: left; padding: 1rem;">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bus_bookings %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem;">{{ booking.bus.departure_city }} â†’ {{ booking.bus.arrival_city }}</td>
+                <td style="padding: 1rem;">{{ booking.travel_date.strftime('%Y-%m-%d') }}</td>
+                <td style="padding: 1rem;">{{ booking.selected_class }}</td>
+                <td style="padding: 1rem;">{{ booking.num_travellers }}</td>
+                <td style="padding: 1rem;">₹{{ booking.final_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No bus bookings yet.</p>
+    {% endif %}
+</div>
+
+<div class="glass-card">
+    <h2 class="mb-4">Cab Bookings</h2>
+    {% if cab_bookings %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 1rem;">Route</th>
+                <th style="text-align: left; padding: 1rem;">Date</th>
+                <th style="text-align: left; padding: 1rem;">Type</th>
+                <th style="text-align: left; padding: 1rem;">Travellers</th>
+                <th style="text-align: left; padding: 1rem;">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in cab_bookings %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem;">{{ booking.cab.departure_city }} â†’ {{ booking.cab.arrival_city }}</td>
+                <td style="padding: 1rem;">{{ booking.travel_date.strftime('%Y-%m-%d') }}</td>
+                <td style="padding: 1rem;">{{ booking.selected_class }}</td>
+                <td style="padding: 1rem;">{{ booking.num_travellers }}</td>
+                <td style="padding: 1rem;">₹{{ booking.final_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No cab bookings yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

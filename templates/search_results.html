@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card">
+    <h1 style="margin-bottom: 2rem;">🔍 Search Results</h1>
+
+    <!-- Search and Filter Form -->
+    <form action="{{ url_for('search') }}" method="GET" style="margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <input type="text" name="q" class="form-control" placeholder="Search packages..." value="{{ query or '' }}">
+            <input type="number" name="min_price" class="form-control" placeholder="Min Price"
+                value="{{ min_price or '' }}">
+            <input type="number" name="max_price" class="form-control" placeholder="Max Price"
+                value="{{ max_price or '' }}">
+            <select name="sort" class="form-control">
+                <option value="newest" {% if sort=='newest' %}selected{% endif %}>Newest First</option>
+                <option value="price_low" {% if sort=='price_low' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_high" {% if sort=='price_high' %}selected{% endif %}>Price: High to Low</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <p style="margin-bottom: 1.5rem; color: #666;">Found {{ packages|length }} package(s)</p>
+
+    {% if packages %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+        {% for package in packages %}
+        <div class="package-card" style="position: relative;">
+            {% if package.discount_percentage > 0 %}
+            <span
+                style="position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: bold; z-index: 10;">
+                {{ package.discount_percentage|int }}% OFF
+            </span>
+            {% endif %}
+
+            <a href="{{ url_for('package_details', package_id=package.id) }}">
+                {% if package.image_url %}
+                <img src="{{ package.image_url }}" alt="{{ package.name }}" class="package-image">
+                {% else %}
+                <img src="https://via.placeholder.com/400x250?text={{ package.name }}" alt="{{ package.name }}"
+                    class="package-image">
+                {% endif %}
+            </a>
+
+            <div class="package-info">
+                <h3>{{ package.name }}</h3>
+                <p class="package-duration">{{ package.duration }}</p>
+
+                {% if package.discount_percentage > 0 %}
+                <p class="package-price">
+                    <span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">₹{{ package.price
+                        }}</span>
+                    <span style="color: #e74c3c; font-size: 1.5rem; font-weight: bold;">₹{{ (package.price * (1 -
+                        package.discount_percentage / 100))|round|int }}</span>
+                </p>
+                {% else %}
+                <p class="package-price">₹{{ package.price }}</p>
+                {% endif %}
+
+                <a href="{{ url_for('package_details', package_id=package.id) }}" class="btn btn-primary"
+                    style="width: 100%; margin-top: 1rem;">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem;">
+        <p style="font-size: 1.2rem; color: #666;">No packages found matching your criteria.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary" style="margin-top: 1rem;">Browse All Packages</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

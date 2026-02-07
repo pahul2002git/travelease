@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>User Inquiries</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Admin Panel</a>
+    </div>
+
+    {% if inquiries %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; color: white;">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left;">
+                    <th style="padding: 1rem;">Date</th>
+                    <th style="padding: 1rem;">Name</th>
+                    <th style="padding: 1rem;">Email</th>
+                    <th style="padding: 1rem;">Subject</th>
+                    <th style="padding: 1rem;">Message</th>
+                    <th style="padding: 1rem;">Status</th>
+                    <th style="padding: 1rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inquiry in inquiries %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                        {{ inquiry.created_at.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td style="padding: 1rem; font-weight: 600;">{{ inquiry.name }}</td>
+                    <td style="padding: 1rem;">{{ inquiry.email }}</td>
+                    <td style="padding: 1rem; color: var(--primary-color);">{{ inquiry.subject }}</td>
+                    <td style="padding: 1rem;">
+                        <p style="max-width: 300px; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.4;">
+                            {{ inquiry.message }}
+                        </p>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span
+                            class="badge {% if inquiry.status == 'Acknowledged' %}badge-success{% else %}badge-warning{% endif %}">
+                            {{ inquiry.status }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        {% if inquiry.status == 'Pending' %}
+                        <form action="{{ url_for('acknowledge_inquiry', contact_id=inquiry.id) }}" method="POST"
+                            style="display:inline;">
+                            <button type="submit" class="btn btn-primary"
+                                style="padding: 0.4rem 1rem; font-size: 0.8rem;">Acknowledge</button>
+                        </form>
+                        {% else %}
+                        <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Reviewed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center" style="padding: 3rem; color: rgba(255,255,255,0.5);">No inquiries found.</p>
+    {% endif %}
+</div>
+{% endblock %}

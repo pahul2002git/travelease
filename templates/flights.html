@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card mb-4" style="text-align: center;">
+    <h1>Available Flights</h1>
+    <p class="text-muted">
+        Select a flight from <strong>{{ from_city }}</strong> to <strong>{{ to_city }}</strong> on <strong>{{ date
+            }}</strong>
+    </p>
+</div>
+
+<div class="row">
+    {% for flight in flights %}
+    <div class="col-md-6 mb-4">
+        <div class="glass-card flight-result-card"
+            style="padding: 1.5rem; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0; color: var(--primary-color);">{{ flight.airline }}</h3>
+                    <small style="color: rgba(255,255,255,0.6);">{{ flight.flight_number }}</small>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 1.5rem; font-weight: 700; color: #fff;">₹{{ flight.calculated_price
+                        }}</span>
+                    <p class="text-muted" style="margin: 0;">per person</p>
+                    {% if travellers|int > 1 %}
+                    <div style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.2rem;">
+                        <span style="font-size: 0.9rem; color: var(--primary-color);">Total: ₹{{ flight.total_price
+                            }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 2rem; margin: 1.5rem 0; align-items: center;">
+                <div style="flex: 1; text-align: center;">
+                    <span style="display: block; font-size: 1.2rem; font-weight: 600;">{{ flight.departure_time
+                        }}</span>
+                    <small style="color: var(--primary-color);">{{ flight.departure_city }}</small>
+                </div>
+                <div style="flex: 1; text-align: center; position: relative;">
+                    <div
+                        style="height: 1px; background: rgba(255,255,255,0.2); width: 100%; position: absolute; top: 50%;">
+                    </div>
+                    <i class="fas fa-plane"
+                        style="position: relative; background: transparent; padding: 0 10px; z-index: 1;"></i>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <span style="display: block; font-size: 1.2rem; font-weight: 600;">(Arrival)</span>
+                    <small style="color: var(--primary-color);">{{ flight.arrival_city }}</small>
+                </div>
+            </div>
+
+            <a href="{{ url_for('select_flight', flight_id=flight.id, date=date) }}" class="btn btn-primary"
+                style="width: 100%;">Select Flight</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center">
+        <p>No flights found for this route. Try another search!</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .flight-result-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}

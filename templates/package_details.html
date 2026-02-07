@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card">
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            {% if package.image_url %}
+            <img src="{{ package.image_url }}" alt="{{ package.name }}" class="detail-image">
+            {% else %}
+            <img src="https://via.placeholder.com/600x400?text=Dream+Destination" alt="Placeholder"
+                class="detail-image">
+            {% endif %}
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            <h1>{{ package.name }}</h1>
+
+            <!-- Star Rating -->
+            <div style="margin: 0.5rem 0;">
+                {% if review_count > 0 %}
+                <span class="stars">
+                    {% for i in range(1, 6) %}
+                    {% if i <= avg_rating|round %} <span style="color: #FFD700; font-size: 1.2rem;">★</span>
+                {% else %}
+                <span style="color: #ddd; font-size: 1.2rem;">★</span>
+                {% endif %}
+                {% endfor %}
+                </span>
+                <span style="margin-left: 0.5rem; color: #666;">{{ avg_rating|round(1) }} ({{ review_count }}
+                    reviews)</span>
+                {% else %}
+                <span style="color: #999;">No reviews yet</span>
+                {% endif %}
+            </div>
+
+            <h3 class="text-muted">{{ package.duration }}</h3>
+
+            {% if package.discount_percentage > 0 %}
+            <div style="margin: 1rem 0;">
+                <span style="text-decoration: line-through; color: #999; font-size: 1.2rem;">₹{{ package.price }}</span>
+                <h2 class="package-price" style="display: inline; margin-left: 1rem; color: #e74c3c;">₹{{ (package.price
+                    * (1 - package.discount_percentage / 100))|round|int }}</h2>
+                <span
+                    style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; font-size: 0.9rem;">{{
+                    package.discount_percentage|int }}% OFF</span>
+            </div>
+            {% else %}
+            <h2 class="package-price my-3">₹{{ package.price }}</h2>
+            {% endif %}
+
+            <p style="line-height: 1.6;">{{ package.description }}</p>
+
+            <div class="mt-4" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('checkout', package_id=package.id) }}" class="btn btn-primary btn-lg">Book Now</a>
+
+                <!-- Wishlist Button -->
+                <form
+                    action="{{ url_for('remove_from_wishlist' if in_wishlist else 'add_to_wishlist', package_id=package.id) }}"
+                    method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-outline-danger"
+                        style="font-size: 1.5rem; padding: 0.45rem 1rem;">
+                        {{ '❤️' if in_wishlist else '🤍' }}
+                    </button>
+                </form>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Book</a>
+                {% endif %}
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Packages</a>
+            </div>
+        </div>
+    </div>
+
+    {% if package.hotel_details or package.sightseeing or package.popular_places or package.itinerary or
+    package.hotel_amenities %}
+    <div
+        style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+
+        {% if package.itinerary %}
+        <div class="glass-card" style="margin-bottom: 0; padding: 1.5rem; grid-column: 1 / -1;">
+            <h3>📅 Day-by-Day Itinerary</h3>
+            <ul class="point-list">
+                {% for day in package.itinerary.split('|') %}
+                <li><strong>{{ day.strip() }}</strong></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if package.hotel_details %}
+        <div class="glass-card" style="margin-bottom: 0; padding: 1.5rem;">
+            <h3>🏨 Hotel Bookings</h3>
+            <ul class="point-list">
+                {% for point in package.hotel_details.split('|') %}
+                <li>{{ point.strip() }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if package.hotel_amenities %}
+        <div class="glass-card" style="margin-bottom: 0; padding: 1.5rem;">
+            <h3>🌟 Hotel Amenities & Facilities</h3>
+            <ul class="point-list">
+                {% for amenity in package.hotel_amenities.split('|') %}
+                <li>{{ amenity.strip() }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+
+
+        {% if package.sightseeing %}
+        <div class="glass-card" style="margin-bottom: 0; padding: 1.5rem;">
+            <h3>🗺️ Local Sightseeing</h3>
+            <ul class="point-list">
+                {% for point in package.sightseeing.split('|') %}
+                <li>{{ point.strip() }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if package.popular_places %}
+        <div class="glass-card" style="margin-bottom: 0; padding: 1.5rem;">
+            <h3>✨ Popular Places</h3>
+            <ul class="point-list">
+                {% for point in package.popular_places.split('|') %}
+                <li>{{ point.strip() }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Reviews Section -->
+    <div style="margin-top: 3rem;">
+        <h2>Customer Reviews</h2>
+
+        {% if current_user.is_authenticated %}
+        <div class="glass-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+            <h4>Leave a Review</h4>
+            <form action="{{ url_for('submit_review', package_id=package.id) }}" method="POST">
+                <div class="form-group">
+                    <label>Rating</label>
+                    <div style="font-size: 2rem;">
+                        <input type="radio" name="rating" value="1" required style="display:none" id="star1">
+                        <input type="radio" name="rating" value="2" required style="display:none" id="star2">
+                        <input type="radio" name="rating" value="3" required style="display:none" id="star3">
+                        <input type="radio" name="rating" value="4" required style="display:none" id="star4">
+                        <input type="radio" name="rating" value="5" required style="display:none" id="star5">
+                        <label for="star5" style="cursor: pointer; color: #ddd;">★</label>
+                        <label for="star4" style="cursor: pointer; color: #ddd;">★</label>
+                        <label for="star3" style="cursor: pointer; color: #ddd;">★</label>
+                        <label for="star2" style="cursor: pointer; color: #ddd;">★</label>
+                        <label for="star1" style="cursor: pointer; color: #ddd;">★</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Comment (optional)</label>
+                    <textarea name="comment" class="form-control" rows="3"
+                        placeholder="Share your experience..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+        </div>
+        {% endif %}
+
+        {% if reviews %}
+        {% for review in reviews %}
+        <div class="glass-card" style="margin-bottom: 1rem; padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <strong>{{ review.user.username }}</strong>
+                    <div style="color: #FFD700; font-size: 1.2rem; margin: 0.25rem 0;">
+                        {% for i in range(1, 6) %}
+                        {% if i <= review.rating %} ★ {% else %} <span style="color: #ddd;">★</span>
+                            {% endif %}
+                            {% endfor %}
+                    </div>
+                </div>
+                <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+            </div>
+            {% if review.comment %}
+            <p style="margin-top: 0.75rem; margin-bottom: 0;">{{ review.comment }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted">No reviews yet. Be the first to review this package!</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    input[type="radio"]:checked+label,
+    input[type="radio"]:checked~label {
+        color: #FFD700 !important;
+    }
+</style>
+
+{% endblock %}

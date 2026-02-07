@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 800px; margin: 2rem auto;">
+    <h1 class="text-center mb-4">Contact Us</h1>
+    <p class="text-center mb-5" style="color: rgba(255,255,255,0.8);">Have questions about your next big adventure?
+        Reach out to our travel experts!</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+        <!-- Contact Form -->
+        <div class="contact-form">
+            <form action="{{ url_for('contact_us') }}" method="POST">
+                <div class="form-group mb-3">
+                    <label>Full Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Subject</label>
+                    <input type="text" name="subject" class="form-control" placeholder="What is this regarding?"
+                        required>
+                </div>
+                <div class="form-group mb-4">
+                    <label>Your Message</label>
+                    <textarea name="message" class="form-control" rows="5" placeholder="How can we help you?"
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Send Message 🚀</button>
+            </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+            <div class="mb-4">
+                <h4 style="color: var(--primary-color);">📍 Our Headquarters</h4>
+                <p>123 Sky Tower, Ranjit Avenue,<br>Amritsar, PB 143001, India</p>
+            </div>
+            <div class="mb-4">
+                <h4 style="color: var(--primary-color);">📞 Call Us</h4>
+                <p>+91 1800-TRAVEL-EASE<br>+91 9646231014</p>
+            </div>
+            <div class="mb-4">
+                <h4 style="color: var(--primary-color);">📧 Email Us</h4>
+                <p>support@travelease.com<br>info@travelease.com</p>
+            </div>
+            <div>
+                <h4 style="color: var(--primary-color);">🕒 Working Hours</h4>
+                <p>Monday - Saturday: 9:00 AM - 7:00 PM<br>Sunday: Closed</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

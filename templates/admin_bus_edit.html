@@ -1,0 +1,42 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card">
+    <h2 class="mb-4">Edit Bus</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label>Operator</label>
+            <input type="text" name="operator" class="form-control" value="{{ bus.operator }}" required>
+        </div>
+        <div class="form-group">
+            <label>Bus Number</label>
+            <input type="text" name="bus_number" class="form-control" value="{{ bus.bus_number }}" required>
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>From</label>
+                <input type="text" name="departure_city" class="form-control" value="{{ bus.departure_city }}" required>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>To</label>
+                <input type="text" name="arrival_city" class="form-control" value="{{ bus.arrival_city }}" required>
+            </div>
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>Departure Time</label>
+                <input type="text" name="departure_time" class="form-control" value="{{ bus.departure_time }}">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>Base Price (₹)</label>
+                <input type="number" name="base_price" class="form-control" step="0.01" value="{{ bus.base_price }}" required>
+            </div>
+        </div>
+        <div class="d-flex" style="gap: 1rem;">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{{ url_for('admin_buses') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

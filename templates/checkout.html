@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-card">
+        <h2 class="mb-4">Secure Checkout 🔒</h2>
+
+        <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h4>Order Summary</h4>
+            <p><strong>Package:</strong> {{ package.name }}</p>
+            <p><strong>Duration:</strong> {{ package.duration }}</p>
+            <p><strong>Price per Member:</strong> ₹{{ package.price }}</p>
+            <p><strong>Total:</strong> <span class="package-price" id="totalPriceDisplay">₹{{ package.price *
+                    num_members }}</span></p>
+        </div>
+
+        <form action="{{ url_for('pay') }}" method="POST" id="checkoutForm">
+            <input type="hidden" name="package_id" value="{{ package.id }}">
+
+            <div class="form-group mb-4">
+                <label>Number of Travellers</label>
+                <input type="number" name="num_members" id="numMembers" class="form-control" value="{{ num_members }}"
+                    min="1" max="9" required>
+            </div>
+
+            <h4 class="mb-3">Payment Details (Fake Gateway)</h4>
+            <p class="text-muted small mb-3">Use any fake card details to simulate payment.</p>
+
+            <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" class="form-control" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" name="card_number" class="form-control" placeholder="0000 0000 0000 0000" required>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Expiry Date</label>
+                    <input type="text" class="form-control" placeholder="MM/YY" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>CVV</label>
+                    <input type="text" name="cvv" class="form-control" placeholder="123" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="payButton">Pay ₹{{
+                package.price * num_members }}</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const packagePrice = {{ package.price }};
+    const numMembersInput = document.getElementById('numMembers');
+    const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+    const payButton = document.getElementById('payButton');
+
+    numMembersInput.addEventListener('input', function () {
+        const members = parseInt(this.value) || 1;
+        const total = packagePrice * members;
+        totalPriceDisplay.innerText = '₹' + total.toFixed(2);
+        payButton.innerText = 'Pay ₹' + total.toFixed(2);
+    });
+</script>
+{% endblock %}

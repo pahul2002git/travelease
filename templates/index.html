@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <h1 class="hero-title">Find Your Perfect Getaway</h1>
+    <p class="hero-subtitle">Explore our premium holiday packages designed just for you.</p>
+
+    <!-- Search Bar -->
+    <form action="{{ url_for('search') }}" method="GET" style="max-width: 600px; margin: 2rem auto 0;">
+        <div style="display: flex; gap: 0.5rem;">
+            <input type="text" name="q" class="form-control" placeholder="Search destinations..." style="flex: 1;">
+            <button type="submit" class="btn btn-primary">🔍 Search</button>
+        </div>
+    </form>
+</div>
+
+<!-- Airline Partners -->
+<section class="airline-partners-section" id="airline-partners">
+    <div class="airline-partners-header">
+        <h2>Experience Flying with our Airline Partners</h2>
+        <p class="text-muted">Premium comfort, trusted service, and seamless connections worldwide.</p>
+    </div>
+    <div class="airline-grid">
+        <div class="airline-card" style="--airline-accent:#ff3e60;">
+            <div class="airline-card-content">
+                <span class="airline-name">AirAsia</span>
+                <span class="airline-tag">Low-cost, high-comfort</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/airasia.png') }}"
+                alt="AirAsia aircraft tail">
+        </div>
+        <div class="airline-card" style="--airline-accent:#d4a14d;">
+            <div class="airline-card-content">
+                <span class="airline-name">Etihad Airways</span>
+                <span class="airline-tag">Luxury redefined</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/etihad.png') }}"
+                alt="Etihad Airways aircraft tail">
+        </div>
+        <div class="airline-card" style="--airline-accent:#2b66d9;">
+            <div class="airline-card-content">
+                <span class="airline-name">Malaysia Airlines</span>
+                <span class="airline-tag">Warm Asian hospitality</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/malaysia.png') }}"
+                alt="Malaysia Airlines aircraft tail">
+        </div>
+        <div class="airline-card" style="--airline-accent:#cfa25e;">
+            <div class="airline-card-content">
+                <span class="airline-name">Emirates</span>
+                <span class="airline-tag">Elevated global travel</span>
+            </div>
+            <img class="airline-tail" src="{{ url_for('static', filename='images/airlines/emirates.png') }}"
+                alt="Emirates aircraft tail">
+        </div>
+    </div>
+</section>
+
+<!-- Hotel Chains -->
+<section class="hotel-chains-section" id="hotel-chains">
+    <div class="hotel-chains-header">
+        <div class="hotel-chains-copy">
+            <h2>Luxury Hotel Partners</h2>
+            <p class="text-muted">Iconic brands, impeccable service, and world-class stays designed for premium
+                travelers.</p>
+        </div>
+    </div>
+    <div class="hotel-chain-grid">
+        <a class="hotel-chain-card" href="https://www.fourseasons.com/" target="_blank" rel="noopener noreferrer">
+            <span class="hotel-chain-badge">Four Seasons</span>
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Four_Seasons_Hotel.jpg?width=1200"
+                alt="Four Seasons Hotels">
+            <div class="hotel-chain-overlay">
+                <span>Four Seasons Hotels</span>
+            </div>
+        </a>
+        <a class="hotel-chain-card" href="https://www.ritzcarlton.com/" target="_blank" rel="noopener noreferrer">
+            <span class="hotel-chain-badge">Ritz-Carlton</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Hotel_The_Ritz-Carlton.jpg"
+                alt="Ritz-Carlton Hotels">
+            <div class="hotel-chain-overlay">
+                <span>The Ritz-Carlton</span>
+            </div>
+        </a>
+        <a class="hotel-chain-card" href="https://www.stregis.com/" target="_blank" rel="noopener noreferrer">
+            <span class="hotel-chain-badge">St. Regis</span>
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Facade_of_St._Regis_Hotel%2C_August_2020.jpg?width=1200"
+                alt="St. Regis Hotels">
+            <div class="hotel-chain-overlay">
+                <span>St. Regis Hotels</span>
+            </div>
+        </a>
+        <a class="hotel-chain-card" href="https://www.waldorfastoria.com/" target="_blank" rel="noopener noreferrer">
+            <span class="hotel-chain-badge">Waldorf Astoria</span>
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Waldorf_Astoria_exterior.jpg?width=1200"
+                alt="Waldorf Astoria Hotels">
+            <div class="hotel-chain-overlay">
+                <span>Waldorf Astoria</span>
+            </div>
+        </a>
+        <a class="hotel-chain-card" href="https://www.jwmarriott.com/" target="_blank" rel="noopener noreferrer">
+            <span class="hotel-chain-badge">JW Marriott</span>
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/JW_Marriott_MOA.jpg?width=1200"
+                alt="JW Marriott Hotels">
+            <div class="hotel-chain-overlay">
+                <span>JW Marriott</span>
+            </div>
+        </a>
+        <a class="hotel-chain-card" href="https://www.hyatt.com/" target="_blank" rel="noopener noreferrer">
+            <span class="hotel-chain-badge">Hyatt</span>
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hyatt_Regency_Chicago.jpg?width=1200"
+                alt="Hyatt Hotels">
+            <div class="hotel-chain-overlay">
+                <span>Hyatt Hotels</span>
+            </div>
+        </a>
+    </div>
+</section>
+
+
+<!-- Featured Packages -->
+<h2 class="mb-4" id="featured-packages">Featured Packages</h2>
+<div class="package-grid">
+    {% for package in packages %}
+    <div class="glass-card package-card" style="position: relative;">
+        {% if package.discount_percentage > 0 %}
+        <span
+            style="position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: bold; z-index: 10;">
+            {{ package.discount_percentage|int }}% OFF
+        </span>
+        {% endif %}
+
+        {% if package.image_url %}
+        <img src="{{ package.image_url }}" alt="{{ package.name }}">
+        {% else %}
+        <img src="https://via.placeholder.com/400x250?text=Dream+Destination" alt="Placeholder">
+        {% endif %}
+        <h3>{{ package.name }}</h3>
+        <p class="text-muted">{{ package.duration }}</p>
+        <p>{{ package.description[:100] }}...</p>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            {% if package.discount_percentage > 0 %}
+            <span>
+                <span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">₹{{ package.price }}</span>
+                <span class="package-price" style="color: #e74c3c;">₹{{ (package.price * (1 -
+                    package.discount_percentage / 100))|round|int }}</span>
+            </span>
+            {% else %}
+            <span class="package-price">₹{{ package.price }}</span>
+            {% endif %}
+            <a href="{{ url_for('package_details', package_id=package.id) }}" class="btn btn-primary">View Details</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+<!-- About Us -->
+<section class="about-section" id="about-us">
+    <div class="about-content">
+        <div class="about-copy">
+            <span class="about-eyebrow">About TravelEase</span>
+            <h2>Curated journeys with comfort, clarity, and care.</h2>
+            <p>
+                TravelEase is your premium travel companion, crafted to make planning effortless and every trip
+                unforgettable. From handpicked holiday packages to trusted airline and hotel partners, we focus on
+                quality, transparency, and service that feels personal.
+            </p>
+            <p>
+                Whether you're looking for a quick escape or a once-in-a-lifetime getaway, our team blends local
+                expertise with global standards to deliver smooth booking, honest pricing, and memorable stays.
+            </p>
+            <div class="about-highlights">
+                <div class="about-pill">Verified Partners</div>
+                <div class="about-pill">Secure Booking</div>
+                <div class="about-pill">24/7 Support</div>
+                <div class="about-pill">Tailored Experiences</div>
+            </div>
+        </div>
+        <div class="about-card">
+            <div class="about-stat">
+                <span class="about-stat-value">500+</span>
+                <span class="about-stat-label">Premium Stays</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat-value">120+</span>
+                <span class="about-stat-label">Destinations</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat-value">4.9★</span>
+                <span class="about-stat-label">Average Rating</span>
+            </div>
+            <div class="about-divider"></div>
+            <p class="about-note">Designed for travelers who value time, comfort, and peace of mind.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
