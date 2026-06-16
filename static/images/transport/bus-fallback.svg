@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#eaf1e9"/>
+  <rect y="560" width="1200" height="240" fill="#d2e1d1"/>
+  <text x="600" y="360" text-anchor="middle" font-size="110" font-family="Arial, sans-serif" fill="#2d5e42">BUS</text>
+  <text x="600" y="450" text-anchor="middle" font-size="44" font-family="Arial, sans-serif" fill="#4f7c64">Image unavailable</text>
+</svg>

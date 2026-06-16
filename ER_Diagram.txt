@@ -1,0 +1,304 @@
+Entity-Relationship Diagram for Holiday Booking System
+
+Entities and Attributes:
+
+User
+- id (PK)
+- username
+- email
+- password
+- is_admin
+
+Package
+- id (PK)
+- name
+- description
+- price
+- duration
+- image_url
+- hotel_details
+- sightseeing
+- popular_places
+- flight_details
+- itinerary
+- hotel_amenities
+- discount_percentage
+- special_offer_text
+- is_featured
+- images
+- flight_economy_price
+- flight_premium_economy_price
+- flight_business_price
+- flight_first_class_price
+- created_at
+
+Booking
+- id (PK)
+- user_id (FK to User)
+- package_id (FK to Package)
+- booking_date
+- status
+- num_members
+- total_price
+- selected_flight_class
+- flight_price_at_booking
+- flight_booking_id (FK to FlightBooking)
+
+Flight
+- id (PK)
+- airline
+- flight_number
+- departure_city
+- arrival_city
+- departure_time
+- base_price
+
+FlightBooking
+- id (PK)
+- flight_id (FK to Flight)
+- user_id (FK to User)
+- departure_date
+- selected_class
+- num_travellers
+- final_price
+
+Contact
+- id (PK)
+- name
+- email
+- subject
+- message
+- status
+- created_at
+
+Review
+- id (PK)
+- package_id (FK to Package)
+- user_id (FK to User)
+- rating
+- comment
+- created_at
+
+Wishlist
+- id (PK)
+- user_id (FK to User)
+- package_id (FK to Package)
+- created_at
+
+Train
+- id (PK)
+- operator
+- train_number
+- departure_city
+- arrival_city
+- departure_time
+- base_price
+
+TrainBooking
+- id (PK)
+- train_id (FK to Train)
+- user_id (FK to User)
+- travel_date
+- selected_class
+- num_travellers
+- final_price
+- status
+- created_at
+
+Bus
+- id (PK)
+- operator
+- bus_number
+- departure_city
+- arrival_city
+- departure_time
+- base_price
+
+BusBooking
+- id (PK)
+- bus_id (FK to Bus)
+- user_id (FK to User)
+- travel_date
+- selected_class
+- num_travellers
+- final_price
+- status
+- created_at
+
+Cab
+- id (PK)
+- provider
+- cab_type
+- departure_city
+- arrival_city
+- base_price
+
+CabBooking
+- id (PK)
+- cab_id (FK to Cab)
+- user_id (FK to User)
+- travel_date
+- selected_class
+- num_travellers
+- final_price
+- status
+- created_at
+
+Relationships:
+
+User --(1:N)-- Booking
+User --(1:N)-- FlightBooking
+User --(1:N)-- TrainBooking
+User --(1:N)-- BusBooking
+User --(1:N)-- CabBooking
+User --(1:N)-- Review
+User --(1:N)-- Wishlist
+
+Package --(1:N)-- Booking
+Package --(1:N)-- Review
+Package --(1:N)-- Wishlist
+
+Booking --(N:1)-- Package
+Booking --(N:1)-- User
+Booking --(N:1)-- FlightBooking (optional)
+
+Flight --(1:N)-- FlightBooking
+FlightBooking --(N:1)-- Flight
+FlightBooking --(N:1)-- User
+
+Review --(N:1)-- Package
+Review --(N:1)-- User
+
+Wishlist --(N:1)-- Package
+Wishlist --(N:1)-- User
+
+Train --(1:N)-- TrainBooking
+TrainBooking --(N:1)-- Train
+TrainBooking --(N:1)-- User
+
+Bus --(1:N)-- BusBooking
+BusBooking --(N:1)-- Bus
+BusBooking --(N:1)-- User
+
+Cab --(1:N)-- CabBooking
+CabBooking --(N:1)-- Cab
+CabBooking --(N:1)-- User
+
+ASCII Art Representation:
+
++----------------+       +----------------+       +----------------+
+|     User       |       |    Package     |       |    Booking     |
++----------------+       +----------------+       +----------------+
+| id (PK)        |<--1:N-| id (PK)        |<--1:N-| id (PK)        |
+| username       |       | name           |       | user_id (FK)   |
+| email          |       | description    |       | package_id (FK)|
+| password       |       | price          |       | booking_date   |
+| is_admin       |       | ...            |       | status         |
++----------------+       +----------------+       | num_members    |
+          |                     |                  | total_price    |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |                     |
+          |                     |                  +----------------+
+          |                     |                  |    Review      |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | package_id (FK)|
+          |                     |                  | user_id (FK)   |
+          |                     |                  | rating         |
+          |                     |                  | comment        |
+          |                     |                  +----------------+
+          |
+          |                     |                  +----------------+
+          |                     |                  |   Wishlist     |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | user_id (FK)   |
+          |                     |                  | package_id (FK)|
+          |                     |                  +----------------+
+          |
+          |                     |                  +----------------+
+          |                     |                  |   Flight       |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | airline        |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |                     |                        |
+          |                     |                        |
+          |                     |                  +----------------+
+          |                     |                  | FlightBooking  |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | flight_id (FK) |
+          |                     |                  | user_id (FK)   |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |
+          |                     |                  +----------------+
+          |                     |                  |    Train       |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | operator       |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |                     |                        |
+          |                     |                        |
+          |                     |                  +----------------+
+          |                     |                  | TrainBooking   |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | train_id (FK)  |
+          |                     |                  | user_id (FK)   |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |
+          |                     |                  +----------------+
+          |                     |                  |     Bus        |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | operator       |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |                     |                        |
+          |                     |                        |
+          |                     |                  +----------------+
+          |                     |                  |  BusBooking    |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | bus_id (FK)    |
+          |                     |                  | user_id (FK)   |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |
+          |                     |                  +----------------+
+          |                     |                  |     Cab        |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | provider       |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |                     |                        |
+          |                     |                        |
+          |                     |                  +----------------+
+          |                     |                  |  CabBooking    |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | cab_id (FK)    |
+          |                     |                  | user_id (FK)   |
+          |                     |                  | ...            |
+          |                     |                  +----------------+
+          |
+          |                     |                  +----------------+
+          |                     |                  |   Contact      |
+          |                     |                  +----------------+
+          |                     |                  | id (PK)        |
+          |                     |                  | name           |
+          |                     |                  | email          |
+          |                     |                  | subject        |
+          |                     |                  | message        |
+          |                     |                  | status         |
+          |                     |                  | created_at     |
+          |                     |                  +----------------+
+          |
+          +---------------------+----------------------+

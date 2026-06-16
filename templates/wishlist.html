@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card">
+    <h1 style="margin-bottom: 2rem;">💖 My Wishlist</h1>
+
+    {% if packages %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+        {% for package in packages %}
+        <div class="package-card" style="position: relative;">
+            {% if package.discount_percentage > 0 %}
+            <span
+                style="position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: bold; z-index: 10;">
+                {{ package.discount_percentage|int }}% OFF
+            </span>
+            {% endif %}
+
+            <a href="{{ url_for('package_details', package_id=package.id) }}">
+                {% if package.image_url %}
+                <img src="{{ package.image_url }}" alt="{{ package.name }}" class="package-image">
+                {% else %}
+                <img src="https://via.placeholder.com/400x250?text={{ package.name }}" alt="{{ package.name }}"
+                    class="package-image">
+                {% endif %}
+            </a>
+
+            <div class="package-info">
+                <h3>{{ package.name }}</h3>
+                <p class="package-duration">{{ package.duration }}</p>
+
+                {% if package.discount_percentage > 0 %}
+                <p class="package-price">
+                    <span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">₹{{ package.price
+                        }}</span>
+                    <span style="color: #e74c3c; font-size: 1.5rem; font-weight: bold;">₹{{ (package.price * (1 -
+                        package.discount_percentage / 100))|round|int }}</span>
+                </p>
+                {% else %}
+                <p class="package-price">₹{{ package.price }}</p>
+                {% endif %}
+
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <a href="{{ url_for('checkout', package_id=package.id) }}" class="btn btn-primary"
+                        style="flex: 1;">Book Now</a>
+                    <form action="{{ url_for('remove_from_wishlist', package_id=package.id) }}" method="POST"
+                        style="display: inline;">
+                        <button type="submit" class="btn btn-outline-danger">
+                            Remove 🗑️
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem;">
+        <p style="font-size: 1.2rem; color: #666;">Your wishlist is empty!</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary" style="margin-top: 1rem;">Browse Packages</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+instance/
+.env
+.mplconfig/
+screenshots/
+final_report_assets/
+report_diagrams/
+synopsis_diagrams/

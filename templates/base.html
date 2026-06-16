@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelEase - Book Your Getaway</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/video.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dynamic Background Image -->
+    {% if package and package.image_url %}
+    {% set bg_url = package.image_url %}
+    {% else %}
+    {% set bg_url = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80' %}
+    {% endif %}
+    <div id="bg-image" style="background-image: url('{{ bg_url }}');"></div>
+
+    {% if request.endpoint == 'index' %}
+    <!-- Background Video (Only on Home Page) -->
+    <video autoplay muted loop playsinline id="bg-video">
+        <source
+            src="https://assets.mixkit.co/videos/preview/mixkit-drone-view-of-a-beautiful-resort-and-the-ocean-1564-large.mp4"
+            type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    {% endif %}
+    <div class="video-overlay"></div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="navbar-brand">TravelEase ✈️</a>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('trains') }}">Trains</a>
+            <a href="{{ url_for('buses') }}">Buses</a>
+            <a href="{{ url_for('cabs') }}">Cabs</a>
+            <a href="{{ url_for('contact_us') }}">Contact</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}">My Bookings</a>
+            {% if current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}">Admin Panel</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="main-footer">
+        <div class="social-strip">
+            <a class="social-icon" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
+                aria-label="Instagram">
+                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+            </a>
+            <a class="social-icon" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+                <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+            </a>
+            <a class="social-icon" href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer"
+                aria-label="LinkedIn">
+                <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
+            </a>
+            <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer"
+                aria-label="Facebook">
+                <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+            </a>
+        </div>
+        <p>&copy; {{ year }} TravelEase. All rights reserved. | <a href="{{ url_for('login') }}">Admin Login</a></p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/custom-select.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/page-transitions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/payment-voice.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/spin-wheel.js') }}"></script>
+    <!-- TravelEase AI Assistant Toggle -->
+    <button id="chatbotToggle" class="chatbot-toggle" type="button" aria-label="Open trip assistant">
+        <span class="toggle-icon">✈</span> Trip Assistant
+    </button>
+
+    <!-- TravelEase AI Assistant Panel -->
+    <section id="chatbotPanel" class="chatbot-panel" aria-label="TravelEase trip assistant">
+        <!-- Header -->
+        <div class="chatbot-header">
+            <div class="chatbot-avatar">🤖</div>
+            <div class="chatbot-header-info">
+                <div class="chatbot-header-name">TravelEase Assistant</div>
+                <div class="chatbot-header-status">Online &amp; Ready to Help</div>
+            </div>
+            <button id="chatbotClose" class="chatbot-close" type="button" aria-label="Close assistant">&times;</button>
+        </div>
+
+        <!-- Messages -->
+        <div id="chatbotMessages" class="chatbot-messages">
+            <div class="chatbot-bot-row">
+                <div class="chatbot-bot-icon">✈</div>
+                <div class="chatbot-message bot">
+                    👋 Hello! I'm your <strong>TravelEase Assistant</strong>.
+
+I can help you with:
+- Holiday package suggestions
+- Flight, train, bus &amp; cab bookings
+- Pricing, deals, and availability
+- Step-by-step booking guidance
+
+What can I help you plan today?
+                    <span class="msg-time"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reply Chips -->
+        <div id="chatbotChips" class="chatbot-chips"></div>
+
+        <!-- Input Form -->
+        <form id="chatbotForm" class="chatbot-form" autocomplete="off">
+            <input id="chatbotInput" type="text" placeholder="Ask about trips, prices, bookings..." maxlength="800" aria-label="Your message">
+            <button type="submit" aria-label="Send message">&#9658;</button>
+        </form>
+    </section>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+
+</html>

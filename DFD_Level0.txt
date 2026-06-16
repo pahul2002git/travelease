@@ -1,0 +1,55 @@
+Data Flow Diagram (DFD) Level-0 for Holiday Booking System
+
+Description:
+DFD Level-0 provides an overview of the entire system as a single process. It shows the interactions between external entities and the system, along with data flows and data stores.
+
+External Entities:
+- User: Regular users who register, login, browse/search packages, book holidays and transport, make payments, submit reviews, manage wishlist, and contact support.
+- Admin: Administrative users who login, manage packages and transport data, view and edit bookings, handle inquiries.
+- Payment Gateway: External service that processes payment transactions.
+
+Process:
+- Holiday Booking System: The main process that handles all user and admin interactions, processes bookings, manages data, and communicates with the payment gateway.
+
+Data Store:
+- Database: Stores all persistent data including users, packages, bookings, transport, reviews, wishlist, contacts, etc.
+
+Data Flows:
+- User to System: Registration data, login credentials, search queries, booking requests, payment details, review data, wishlist actions, contact messages.
+- System to User: Package listings, search results, booking confirmations, payment responses, dashboard data, review confirmations, wishlist updates, contact acknowledgments.
+- Admin to System: Login credentials, package/transport management data, booking edits, inquiry acknowledgments.
+- System to Admin: Dashboard data, booking lists, inquiry lists, package/transport data.
+- System to Payment Gateway: Payment requests (card details, amounts).
+- Payment Gateway to System: Payment confirmations or failures.
+- System to Database: CRUD operations for all entities (users, packages, bookings, etc.).
+- Database to System: Retrieved data for queries, listings, etc.
+
+ASCII Art Representation:
+
++-------------------+       +-------------------+       +-------------------+
+|       User        |       |      Admin        |       | Payment Gateway   |
++-------------------+       +-------------------+       +-------------------+
+          |                           |                           |
+          | Registration/Login        | Login Credentials        | Payment Requests
+          | Search Queries            | Management Data          | (Card Details,
+          | Booking Requests          | Booking Edits            |  Amounts)
+          | Payment Details           | Inquiry Actions          |
+          | Review Data               |                           |
+          | Wishlist Actions          |                           |
+          | Contact Messages          |                           |
+          v                           v                           v
++-------------------+       +-------------------+       +-------------------+
+| Holiday Booking   |<--------------------------------->|     Database      |
+|     System        |       |                           |                   |
++-------------------+       +-------------------+       +-------------------+
+          |                           |                           |
+          | Package Listings          | Dashboard Data            | Payment
+          | Search Results            | Booking Lists             | Confirmations/
+          | Booking Confirmations     | Inquiry Lists             | Failures
+          | Payment Responses         | Package/Transport Data    |
+          | Dashboard Data            |                           |
+          | Review Confirmations      |                           |
+          | Wishlist Updates          |                           |
+          | Contact Acknowledgments   |                           |
+          ^                           ^                           ^
++-------------------+       +-------------------+       +-------------------+

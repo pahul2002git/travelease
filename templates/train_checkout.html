@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card" style="max-width:680px;margin:0 auto;">
+    <h2 class="mb-4">🚆 Train Checkout</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 style="margin:0;">{{ train.operator }}</h3>
+            <p class="text-muted mb-0">{{ train.train_number }} &bull; {{ train.departure_city }} → {{ train.arrival_city }}</p>
+        </div>
+        <div style="text-align:right;">
+            <span class="package-price">&#8377;{{ total }}</span>
+            <div class="text-muted" style="font-size:0.9rem;">Total for {{ travellers }} traveller(s)</div>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('train_pay') }}" id="trainCheckoutForm" novalidate>
+        <input type="hidden" name="train_id" value="{{ train.id }}">
+        <input type="hidden" name="travellers" value="{{ travellers }}">
+        <input type="hidden" name="travel_class" value="{{ travel_class }}">
+        <input type="hidden" name="payment_method" id="trainPaymentMethodInput" value="card">
+
+        <!-- Booking Summary -->
+        <div class="glass-card mb-4" style="background:rgba(255,255,255,0.06);">
+            <h4 class="mb-3">Booking Summary</h4>
+            <div class="row">
+                <div class="col-md-6 mb-2"><strong>Route</strong><div class="text-muted">{{ train.departure_city }} → {{ train.arrival_city }}</div></div>
+                <div class="col-md-6 mb-2"><strong>Train</strong><div class="text-muted">{{ train.operator }} ({{ train.train_number }})</div></div>
+                <div class="col-md-6 mb-2"><strong>Class</strong><div class="text-muted">{{ travel_class }}</div></div>
+                <div class="col-md-6 mb-2"><strong>Travellers</strong><div class="text-muted">{{ travellers }}</div></div>
+                <div class="col-md-6 mb-2"><strong>Price Per Person</strong><div class="text-muted">&#8377;{{ per_person }}</div></div>
+                <div class="col-12 mt-2"><strong>Total Payable: </strong><span style="color:var(--primary-color);font-weight:700;">&#8377;{{ total }}</span></div>
+            </div>
+        </div>
+
+        <!-- Travel Date Picker -->
+        <div class="form-group mb-3">
+            <label><strong>Travel Date</strong> <span style="color:#ff6b6b;">*</span></label>
+            <input type="date" name="travel_date" id="trainTravelDate" class="form-control" value="{{ travel_date }}" required>
+            <small class="text-muted">Select your travel date (must be from tomorrow onwards)</small>
+            <div class="invalid-feedback" id="trainTravelDateErr">Please select a valid future date.</div>
+        </div>
+
+        <!-- Payment Method Tabs -->
+        <h4 class="mb-3 mt-4">Payment Details</h4>
+        <div class="payment-tabs mb-3" style="display:flex;gap:10px;">
+            <button type="button" class="pay-tab active" id="trainTabCard" onclick="trainSwitchTab('card')">
+                💳 Credit / Debit Card
+            </button>
+            <button type="button" class="pay-tab" id="trainTabUpi" onclick="trainSwitchTab('upi')">
+                📱 UPI
+            </button>
+        </div>
+
+        <!-- Card Section -->
+        <div id="trainCardSection">
+            <div class="form-group mb-3">
+                <label>Cardholder Name <span style="color:#ff6b6b;">*</span></label>
+                <input type="text" name="cardholder_name" id="trainCardName" class="form-control" placeholder="Full name on card" autocomplete="cc-name">
+                <div class="invalid-feedback" id="trainCardNameErr">Please enter the cardholder name.</div>
+            </div>
+            <div class="form-group mb-3">
+                <label>Card Number <span style="color:#ff6b6b;">*</span></label>
+                <input type="text" name="card_number" id="trainCardNum" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+                <div class="invalid-feedback" id="trainCardNumErr">Enter a valid 16-digit card number.</div>
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <div class="form-group mb-3" style="flex:1;">
+                    <label>Expiry Date <span style="color:#ff6b6b;">*</span></label>
+                    <input type="text" name="expiry" id="trainExpiry" class="form-control" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+                    <div class="invalid-feedback" id="trainExpiryErr">Enter a valid expiry date (MM/YY, not expired).</div>
+                </div>
+                <div class="form-group mb-3" style="flex:1;">
+                    <label>CVV <span style="color:#ff6b6b;">*</span></label>
+                    <input type="password" name="cvv" id="trainCvv" class="form-control" placeholder="•••" maxlength="4" autocomplete="cc-csc">
+                    <div class="invalid-feedback" id="trainCvvErr">Enter a valid 3 or 4 digit CVV.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPI Section -->
+        <div id="trainUpiSection" style="display:none;">
+            <div class="form-group mb-3">
+                <label>UPI ID <span style="color:#ff6b6b;">*</span></label>
+                <input type="text" name="upi_id" id="trainUpiId" class="form-control" placeholder="yourname@upi">
+                <small class="text-muted">e.g. name@okaxis, number@paytm, name@ybl</small>
+                <div class="invalid-feedback" id="trainUpiErr">Enter a valid UPI ID (e.g. name@bank).</div>
+            </div>
+        </div>
+
+        <div class="form-check mb-3 mt-3">
+            <input class="form-check-input" type="checkbox" name="confirm_details" id="confirmTrainDetails">
+            <label class="form-check-label" for="confirmTrainDetails">I confirm the booking details above are correct.</label>
+            <div class="invalid-feedback" id="trainConfirmErr">You must confirm booking details.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Pay &#8377;{{ total }}</button>
+    </form>
+</div>
+
+<style>
+.pay-tab { flex:1; padding:0.6rem 1rem; border:2px solid rgba(255,255,255,0.2); border-radius:8px; background:rgba(255,255,255,0.05); color:#fff; cursor:pointer; font-weight:600; transition:all 0.25s; }
+.pay-tab.active { border-color:var(--primary-color,#00b4d8); background:rgba(0,180,216,0.15); color:var(--primary-color,#00b4d8); }
+.invalid-feedback { display:none; color:#ff6b6b; font-size:0.82rem; margin-top:4px; }
+.field-error .invalid-feedback { display:block; }
+.field-error input { border-color:#ff6b6b !important; }
+.field-ok input { border-color:#4caf50 !important; }
+</style>
+
+<script>
+(function() {
+    var tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+    var tStr = tomorrow.toISOString().split('T')[0];
+    var d = document.getElementById('trainTravelDate');
+    d.setAttribute('min', tStr);
+    if (!d.value || d.value < tStr) d.value = tStr;
+
+    document.getElementById('trainCardNum').addEventListener('input', function() {
+        var v = this.value.replace(/\D/g,'').substring(0,16);
+        this.value = v.replace(/(.{4})/g,'$1 ').trim();
+    });
+    document.getElementById('trainExpiry').addEventListener('input', function() {
+        var v = this.value.replace(/\D/g,'').substring(0,4);
+        if (v.length >= 3) v = v.substring(0,2)+'/'+v.substring(2);
+        this.value = v;
+    });
+    document.getElementById('trainCvv').addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g,'').substring(0,4);
+    });
+})();
+
+window.trainSwitchTab = function(tab) {
+    var isCard = tab==='card';
+    document.getElementById('trainTabCard').classList.toggle('active', isCard);
+    document.getElementById('trainTabUpi').classList.toggle('active', !isCard);
+    document.getElementById('trainCardSection').style.display = isCard ? '' : 'none';
+    document.getElementById('trainUpiSection').style.display = isCard ? 'none' : '';
+    document.getElementById('trainPaymentMethodInput').value = tab;
+};
+
+function markOk(w) { w.classList.remove('field-error'); w.classList.add('field-ok'); }
+function markErr(w) { w.classList.remove('field-ok'); w.classList.add('field-error'); }
+
+document.getElementById('trainCheckoutForm').addEventListener('submit', function(e) {
+    e.preventDefault(); var ok = true;
+    var pm = document.getElementById('trainPaymentMethodInput').value;
+
+    var tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+    var tStr = tomorrow.toISOString().split('T')[0];
+    var dEl = document.getElementById('trainTravelDate');
+    var dWrap = dEl.closest('.form-group');
+    if (!dEl.value || dEl.value < tStr) { markErr(dWrap); ok=false; } else { markOk(dWrap); }
+
+    if (pm==='card') {
+        var nEl=document.getElementById('trainCardName'); var nW=nEl.closest('.form-group');
+        if (!nEl.value.trim()||nEl.value.trim().length<2){markErr(nW);ok=false;}else{markOk(nW);}
+        var cnEl=document.getElementById('trainCardNum'); var cnW=cnEl.closest('.form-group');
+        if(!/^\d{16}$/.test(cnEl.value.replace(/\s/g,''))){markErr(cnW);ok=false;}else{markOk(cnW);}
+        var eEl=document.getElementById('trainExpiry'); var eW=eEl.closest('.form-group'); var eOk=false;
+        var eM=eEl.value.match(/^(\d{2})\/(\d{2})$/);
+        if(eM){var mm=parseInt(eM[1],10),yy=parseInt(eM[2],10),now=new Date(),ny=now.getFullYear()%100,nm=now.getMonth()+1;if(mm>=1&&mm<=12&&(yy>ny||(yy===ny&&mm>nm)))eOk=true;}
+        if(!eOk){markErr(eW);ok=false;}else{markOk(eW);}
+        var cvvEl=document.getElementById('trainCvv'); var cvvW=cvvEl.closest('.form-group');
+        if(!/^\d{3,4}$/.test(cvvEl.value)){markErr(cvvW);ok=false;}else{markOk(cvvW);}
+    } else {
+        var uEl=document.getElementById('trainUpiId'); var uW=uEl.closest('.form-group');
+        if(!/^[\w.\-]+@[\w]+$/.test(uEl.value.trim())){markErr(uW);ok=false;}else{markOk(uW);}
+    }
+
+    var chk=document.getElementById('confirmTrainDetails'); var chkW=chk.closest('.form-check');
+    if(!chk.checked){markErr(chkW);document.getElementById('trainConfirmErr').style.display='block';ok=false;}
+    else{chkW.classList.remove('field-error');document.getElementById('trainConfirmErr').style.display='none';}
+    if(ok) this.submit();
+});
+</script>
+{% endblock %}

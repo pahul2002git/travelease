@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width:600px;margin:0 auto;">
+    <div class="glass-card">
+        <h2 class="mb-4">Secure Checkout</h2>
+
+        <div style="background:rgba(0,0,0,0.03);padding:1rem;border-radius:8px;margin-bottom:2rem;">
+            <h4>Order Summary</h4>
+            <p><strong>Package:</strong> {{ package.name }}</p>
+            <p><strong>Duration:</strong> {{ package.duration }}</p>
+            <p><strong>Price per Member:</strong> &#8377;{{ package.price }}</p>
+            <p><strong>Subtotal:</strong> <span class="package-price" id="subtotalDisplay">&#8377;{{ package.price * num_members }}</span></p>
+
+            {% if spin_offer and spin_discount > 0 and not spin_offer.used %}
+            <p style="margin-top:0.3rem;">
+                <strong>Spin Discount:</strong>
+                <span style="color:#7CFFB2;">{{ spin_discount|int }}% OFF ({{ spin_offer.code }})</span>
+                <span id="discountAmountDisplay" style="margin-left:0.5rem;color:#7CFFB2;"></span>
+            </p>
+            {% elif spin_offer and spin_offer.used %}
+            <p style="margin-top:0.3rem;color:rgba(255,255,255,0.75);">Today's spin offer ({{ spin_offer.label }}) was already used.</p>
+            {% elif spin_offer and spin_offer.discount == 0 %}
+            <p style="margin-top:0.3rem;color:rgba(255,255,255,0.75);">Today's spin result: {{ spin_offer.label }}</p>
+            {% endif %}
+
+            <p style="margin-bottom:0;"><strong>Final Payable:</strong>
+                <span class="package-price" id="totalPriceDisplay">&#8377;{{ package.price * num_members }}</span>
+            </p>
+        </div>
+
+        <!-- Travel Date Picker -->
+        <div class="form-group mb-4">
+            <label><strong>Travel Start Date</strong> <span style="color:#ff6b6b;">*</span></label>
+            <input type="date" id="pkgTravelDate" name="travel_date_display" class="form-control">
+            <small class="text-muted">Optional: choose your preferred travel start date (from tomorrow onwards)</small>
+        </div>
+
+        <form action="{{ url_for('pay') }}" method="POST" id="checkoutForm" novalidate>
+            <input type="hidden" name="package_id" value="{{ package.id }}">
+
+            <div class="form-group mb-4">
+                <label>Number of Travellers</label>
+                <input type="number" name="num_members" id="numMembers" class="form-control"
+                    value="{{ num_members }}" min="1" max="9" required>
+            </div>
+
+            <!-- Payment Method Tabs -->
+            <h4 class="mb-3">Payment Details</h4>
+            <div style="display:flex;gap:10px;margin-bottom:1rem;">
+                <button type="button" class="pay-tab active" id="pkgTabCard" onclick="pkgSwitchTab('card')">
+                    💳 Credit / Debit Card
+                </button>
+                <button type="button" class="pay-tab" id="pkgTabUpi" onclick="pkgSwitchTab('upi')">
+                    📱 UPI
+                </button>
+            </div>
+            <input type="hidden" name="payment_method" id="pkgPaymentMethod" value="card">
+
+            <!-- Card Section -->
+            <div id="pkgCardSection">
+                <div class="form-group mb-3">
+                    <label>Cardholder Name <span style="color:#ff6b6b;">*</span></label>
+                    <input type="text" id="pkgCardName" class="form-control" placeholder="Full name on card" autocomplete="cc-name">
+                    <div class="invalid-feedback" id="pkgCardNameErr">Please enter the cardholder name.</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Card Number <span style="color:#ff6b6b;">*</span></label>
+                    <input type="text" name="card_number" id="pkgCardNum" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+                    <div class="invalid-feedback" id="pkgCardNumErr">Enter a valid 16-digit card number.</div>
+                </div>
+                <div style="display:flex;gap:1rem;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Expiry Date <span style="color:#ff6b6b;">*</span></label>
+                        <input type="text" id="pkgExpiry" class="form-control" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+                        <div class="invalid-feedback" id="pkgExpiryErr">Enter a valid expiry (MM/YY, not expired).</div>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>CVV <span style="color:#ff6b6b;">*</span></label>
+                        <input type="password" name="cvv" id="pkgCvv" class="form-control" placeholder="•••" maxlength="4" autocomplete="cc-csc">
+                        <div class="invalid-feedback" id="pkgCvvErr">Enter a valid 3 or 4 digit CVV.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI Section -->
+            <div id="pkgUpiSection" style="display:none;">
+                <div class="form-group mb-3">
+                    <label>UPI ID <span style="color:#ff6b6b;">*</span></label>
+                    <input type="text" id="pkgUpiId" class="form-control" placeholder="yourname@upi">
+                    <small class="text-muted">e.g. name@okaxis, number@paytm, name@ybl</small>
+                    <div class="invalid-feedback" id="pkgUpiErr">Enter a valid UPI ID (e.g. name@bank).</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:1rem;" id="payButton">
+                Pay &#8377;{{ package.price * num_members }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+.pay-tab { flex:1; padding:0.6rem 1rem; border:2px solid rgba(255,255,255,0.2); border-radius:8px; background:rgba(255,255,255,0.05); color:#fff; cursor:pointer; font-weight:600; transition:all 0.25s; }
+.pay-tab.active { border-color:var(--primary-color,#00b4d8); background:rgba(0,180,216,0.15); color:var(--primary-color,#00b4d8); }
+.invalid-feedback { display:none; color:#ff6b6b; font-size:0.82rem; margin-top:4px; }
+.field-error .invalid-feedback { display:block; }
+.field-error input { border-color:#ff6b6b !important; }
+.field-ok input { border-color:#4caf50 !important; }
+</style>
+
+<script>
+    const packagePrice = {{ package.price }};
+    const spinDiscount = {{ spin_discount|default(0) }};
+    const numMembersInput = document.getElementById('numMembers');
+    const subtotalDisplay = document.getElementById('subtotalDisplay');
+    const discountAmountDisplay = document.getElementById('discountAmountDisplay');
+    const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+    const payButton = document.getElementById('payButton');
+
+    function updateCheckoutTotals() {
+        const members = Math.max(1, parseInt(numMembersInput.value, 10) || 1);
+        const subtotal = packagePrice * members;
+        const discountAmount = subtotal * (spinDiscount / 100);
+        const finalTotal = Math.max(0, subtotal - discountAmount);
+        subtotalDisplay.innerText = '₹' + subtotal.toFixed(2);
+        if (discountAmountDisplay) discountAmountDisplay.innerText = '- ₹' + discountAmount.toFixed(2);
+        totalPriceDisplay.innerText = '₹' + finalTotal.toFixed(2);
+        payButton.innerText = 'Pay ₹' + finalTotal.toFixed(2);
+    }
+    numMembersInput.addEventListener('input', updateCheckoutTotals);
+    updateCheckoutTotals();
+
+    // Date picker: tomorrow onwards
+    (function() {
+        var tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+        var tStr = tomorrow.toISOString().split('T')[0];
+        var d = document.getElementById('pkgTravelDate');
+        d.setAttribute('min', tStr); d.value = tStr;
+    })();
+
+    // Card number formatting
+    document.getElementById('pkgCardNum').addEventListener('input', function() {
+        var v = this.value.replace(/\D/g,'').substring(0,16);
+        this.value = v.replace(/(.{4})/g,'$1 ').trim();
+    });
+    document.getElementById('pkgExpiry').addEventListener('input', function() {
+        var v = this.value.replace(/\D/g,'').substring(0,4);
+        if (v.length >= 3) v = v.substring(0,2)+'/'+v.substring(2);
+        this.value = v;
+    });
+    document.getElementById('pkgCvv').addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g,'').substring(0,4);
+    });
+
+    window.pkgSwitchTab = function(tab) {
+        var isCard = tab==='card';
+        document.getElementById('pkgTabCard').classList.toggle('active', isCard);
+        document.getElementById('pkgTabUpi').classList.toggle('active', !isCard);
+        document.getElementById('pkgCardSection').style.display = isCard ? '' : 'none';
+        document.getElementById('pkgUpiSection').style.display = isCard ? 'none' : '';
+        document.getElementById('pkgPaymentMethod').value = tab;
+    };
+
+    function markOk(w) { w.classList.remove('field-error'); w.classList.add('field-ok'); }
+    function markErr(w) { w.classList.remove('field-ok'); w.classList.add('field-error'); }
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault(); var ok = true;
+        var pm = document.getElementById('pkgPaymentMethod').value;
+        if (pm === 'card') {
+            var nEl=document.getElementById('pkgCardName'); var nW=nEl.closest('.form-group');
+            if (!nEl.value.trim()||nEl.value.trim().length<2){markErr(nW);ok=false;}else{markOk(nW);}
+            var cnEl=document.getElementById('pkgCardNum'); var cnW=cnEl.closest('.form-group');
+            if(!/^\d{16}$/.test(cnEl.value.replace(/\s/g,''))){markErr(cnW);ok=false;}else{markOk(cnW);}
+            var eEl=document.getElementById('pkgExpiry'); var eW=eEl.closest('.form-group'); var eOk=false;
+            var eM=eEl.value.match(/^(\d{2})\/(\d{2})$/);
+            if(eM){var mm=parseInt(eM[1],10),yy=parseInt(eM[2],10),now=new Date(),ny=now.getFullYear()%100,nm=now.getMonth()+1;if(mm>=1&&mm<=12&&(yy>ny||(yy===ny&&mm>nm)))eOk=true;}
+            if(!eOk){markErr(eW);ok=false;}else{markOk(eW);}
+            var cvvEl=document.getElementById('pkgCvv'); var cvvW=cvvEl.closest('.form-group');
+            if(!/^\d{3,4}$/.test(cvvEl.value)){markErr(cvvW);ok=false;}else{markOk(cvvW);}
+        } else {
+            var uEl=document.getElementById('pkgUpiId'); var uW=uEl.closest('.form-group');
+            if(!/^[\w.\-]+@[\w]+$/.test(uEl.value.trim())){markErr(uW);ok=false;}else{markOk(uW);}
+        }
+        if(ok) this.submit();
+    });
+</script>
+{% endblock %}

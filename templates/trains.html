@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card mb-4">
+    <h2 class="mb-3">Book Trains</h2>
+    <form method="POST" class="flight-inputs-grid">
+        <div class="form-group">
+            <label>From</label>
+            <select name="from_city" class="form-control js-custom-select" required>
+                <option value="">Select</option>
+                {% for city in departure_cities %}
+                <option value="{{ city }}" {% if city==from_city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>To</label>
+            <select name="to_city" class="form-control js-custom-select" required>
+                <option value="">Select</option>
+                {% for city in arrival_cities %}
+                <option value="{{ city }}" {% if city==to_city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="travel_date" id="trainDateInput" class="form-control" value="{{ travel_date or '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Class</label>
+            <select name="travel_class" class="form-control js-custom-select">
+                <option value="Economy" {% if travel_class=='Economy' %}selected{% endif %}>Economy</option>
+                <option value="Premium" {% if travel_class=='Premium' %}selected{% endif %}>Premium</option>
+                <option value="Business" {% if travel_class=='Business' %}selected{% endif %}>Business</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Travellers</label>
+            <input type="number" min="1" name="travellers" class="form-control" value="{{ travellers }}">
+        </div>
+        <div class="form-group" style="align-self: end;">
+            <button type="submit" class="btn btn-primary w-100">Search Trains</button>
+        </div>
+    </form>
+</div>
+
+{% if trains %}
+<section class="transport-showcase">
+    <div class="transport-showcase-header">
+        <h2 class="transport-showcase-title">Book a Train</h2>
+        <div class="transport-showcase-line"></div>
+        <p class="transport-section-intro">Choose from curated premium train options</p>
+    </div>
+<div class="transport-results-grid">
+    {% for item in trains %}
+    <div class="glass-card transport-result-card">
+        <div class="transport-card-hero">
+            <span class="transport-hero-badge">&#9733; {{ 4.5 + ((loop.index0 + 2) % 5) / 10 }}</span>
+            <img src="{{ item.image_url }}" alt="{{ item.train.operator }} {{ item.train.train_number }}"
+                onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/transport/train-fallback.svg') }}';">
+            <div class="transport-hero-art">{{ item.train.train_number }}</div>
+        </div>
+        <div class="transport-card-body">
+            <h3 class="transport-card-title">{{ item.train.operator }}</h3>
+            <p class="transport-card-meta">{{ item.train.train_number }} | {{ travel_class }} | {{ travellers }} seats</p>
+
+            <div class="transport-route-row">
+                <div class="transport-stop">
+                    <small>Departure</small>
+                    <span>{{ item.train.departure_city }}</span>
+                </div>
+                <div class="transport-route-line"></div>
+                <div class="transport-stop">
+                    <small>Arrival</small>
+                    <span>{{ item.train.arrival_city }}</span>
+                </div>
+            </div>
+
+            <div class="transport-price-row">
+                <div><strong>&#8377;{{ item.per_person }}</strong></div>
+                <small>{{ item.train.departure_time }}</small>
+            </div>
+
+            {% if travellers|int > 1 %}
+            <p class="transport-total">Total for {{ travellers }} travellers: &#8377;{{ item.total }}</p>
+            {% endif %}
+
+            <a href="{{ url_for('train_checkout', train_id=item.train.id, date=travel_date, travellers=travellers, travel_class=travel_class) }}"
+                class="btn btn-primary w-100">Select Train</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</section>
+{% elif searched %}
+<div class="glass-card text-center">
+    <p>No trains found for this route. Try another search.</p>
+</div>
+{% endif %}
+<script>
+    (function() {
+        var today = new Date().toISOString().split('T')[0];
+        var dateInput = document.getElementById('trainDateInput');
+        if (dateInput) {
+            dateInput.setAttribute('min', today);
+            if (dateInput.value && dateInput.value < today) {
+                dateInput.value = today;
+            }
+        }
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+Use Case Diagram for Holiday Booking System
+
+Actors:
+- User: Regular users who interact with the system to book holidays and transport.
+- Admin: Administrative users who manage the system's data and operations.
+- Payment Gateway: External system that handles payment processing.
+
+Use Cases:
+
+User Use Cases:
+- Register: User creates a new account.
+- Login: User logs into the system.
+- View Packages: User browses available holiday packages.
+- Search Packages: User searches for packages based on criteria.
+- Book Package: User books a holiday package.
+- Book Flight: User books a flight as part of or separately from a package.
+- Book Train: User books a train ticket.
+- Book Bus: User books a bus ticket.
+- Book Cab: User books a cab service.
+- Make Payment: User processes payment for bookings.
+- View Bookings: User views their booking history and details.
+- Edit Booking: User modifies an existing booking.
+- Cancel Booking: User cancels a booking.
+- Add to Wishlist: User adds a package to their wishlist.
+- View Wishlist: User views their wishlist.
+- Submit Review: User submits a review for a package.
+- Contact Support: User sends a contact message to support.
+
+Admin Use Cases:
+- Login: Admin logs into the system.
+- Manage Packages: Admin adds, edits, or deletes holiday packages.
+- Manage Flights: Admin manages flight data (add, edit, delete flights).
+- Manage Trains: Admin manages train data.
+- Manage Buses: Admin manages bus data.
+- Manage Cabs: Admin manages cab data.
+- View Bookings: Admin views all user bookings.
+- Edit Bookings: Admin modifies user bookings.
+- Handle Inquiries: Admin responds to user contact messages.
+- View Reports: Admin views system reports (e.g., sales, user activity).
+
+Relationships:
+- User includes: Register, Login, View Packages, Search Packages, Book Package, Book Flight, Book Train, Book Bus, Book Cab, Make Payment, View Bookings, Edit Booking, Cancel Booking, Add to Wishlist, View Wishlist, Submit Review, Contact Support.
+- Admin includes: Login, Manage Packages, Manage Flights, Manage Trains, Manage Buses, Manage Cabs, View Bookings, Edit Bookings, Handle Inquiries, View Reports.
+- Make Payment extends Book Package, Book Flight, Book Train, Book Bus, Book Cab.
+- Book Flight, Book Train, Book Bus, Book Cab extend Book Package (optional transport bookings).
+- Submit Review extends View Bookings.
+- Contact Support is independent.
+
+ASCII Art Representation:
+
++-------------------+       +-------------------+
+|       User        |       |       Admin       |
++-------------------+       +-------------------+
+          |                           |
+          | - Register                | - Login
+          | - Login                   | - Manage Packages
+          | - View Packages           | - Manage Flights
+          | - Search Packages         | - Manage Trains
+          | - Book Package            | - Manage Buses
+          | - Book Flight             | - Manage Cabs
+          | - Book Train              | - View Bookings
+          | - Book Bus                | - Edit Bookings
+          | - Book Cab                | - Handle Inquiries
+          | - Make Payment            | - View Reports
+          | - View Bookings           |
+          | - Edit Booking            |
+          | - Cancel Booking          |
+          | - Add to Wishlist         |
+          | - View Wishlist           |
+          | - Submit Review           |
+          | - Contact Support         |
+          v                           v
++-------------------+       +-------------------+
+| Holiday Booking   |       |                   |
+|     System        |       |                   |
++-------------------+       +-------------------+
+          |
+          | - Process Payment
+          v
++-------------------+
+| Payment Gateway   |
++-------------------+

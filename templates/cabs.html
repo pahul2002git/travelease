@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card mb-4">
+    <h2 class="mb-3">Book Cabs</h2>
+    <form method="POST" class="flight-inputs-grid">
+        <div class="form-group">
+            <label>From</label>
+            <select name="from_city" class="form-control js-custom-select" required>
+                <option value="">Select</option>
+                {% for city in departure_cities %}
+                <option value="{{ city }}" {% if city==from_city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>To</label>
+            <select name="to_city" class="form-control js-custom-select" required>
+                <option value="">Select</option>
+                {% for city in arrival_cities %}
+                <option value="{{ city }}" {% if city==to_city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="travel_date" id="cabDateInput" class="form-control" value="{{ travel_date or '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Type</label>
+            <select name="travel_class" class="form-control js-custom-select">
+                <option value="Standard" {% if travel_class=='Standard' %}selected{% endif %}>Standard</option>
+                <option value="Comfort" {% if travel_class=='Comfort' %}selected{% endif %}>Comfort</option>
+                <option value="Luxury" {% if travel_class=='Luxury' %}selected{% endif %}>Luxury</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Travellers</label>
+            <input type="number" min="1" name="travellers" class="form-control" value="{{ travellers }}">
+        </div>
+        <div class="form-group" style="align-self: end;">
+            <button type="submit" class="btn btn-primary w-100">Search Cabs</button>
+        </div>
+    </form>
+</div>
+
+{% if cabs %}
+<section class="transport-showcase">
+    <div class="transport-showcase-header">
+        <h2 class="transport-showcase-title">Book a Cab</h2>
+        <div class="transport-showcase-line"></div>
+        <p class="transport-section-intro">Select from our premium fleet</p>
+    </div>
+<div class="transport-results-grid">
+    {% for item in cabs %}
+    <div class="glass-card transport-result-card">
+        <div class="transport-card-hero">
+            <span class="transport-hero-badge">&#9733; {{ 4.5 + (loop.index0 % 5) / 10 }}</span>
+            <img src="{{ item.image_url }}" alt="{{ item.cab.provider }} {{ item.cab.cab_type }}"
+                onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/transport/cab-fallback.svg') }}';">
+            <div class="transport-hero-art">{{ item.cab.cab_type }}</div>
+        </div>
+        <div class="transport-card-body">
+            <h3 class="transport-card-title">{{ item.cab.provider }}</h3>
+            <p class="transport-card-meta">{{ item.cab.cab_type }} | {{ travel_class }} | 4 seats</p>
+
+            <div class="transport-route-row">
+                <div class="transport-stop">
+                    <small>Pickup</small>
+                    <span>{{ item.cab.departure_city }}</span>
+                </div>
+                <div class="transport-route-line"></div>
+                <div class="transport-stop">
+                    <small>Drop</small>
+                    <span>{{ item.cab.arrival_city }}</span>
+                </div>
+            </div>
+
+            <div class="transport-price-row">
+                <div><strong>&#8377;{{ item.per_person }}</strong></div>
+                <small>Per traveller</small>
+            </div>
+
+            {% if travellers|int > 1 %}
+            <p class="transport-total">Total for {{ travellers }} travellers: &#8377;{{ item.total }}</p>
+            {% endif %}
+
+            <a href="{{ url_for('cab_checkout', cab_id=item.cab.id, date=travel_date, travellers=travellers, travel_class=travel_class) }}"
+                class="btn btn-primary w-100">Select Cab</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</section>
+{% elif searched %}
+<div class="glass-card text-center">
+    <p>No cabs found for this route. Try another search.</p>
+</div>
+{% endif %}
+<script>
+    (function() {
+        var today = new Date().toISOString().split('T')[0];
+        var dateInput = document.getElementById('cabDateInput');
+        if (dateInput) {
+            dateInput.setAttribute('min', today);
+            if (dateInput.value && dateInput.value < today) {
+                dateInput.value = today;
+            }
+        }
+    })();
+</script>
+{% endblock %}

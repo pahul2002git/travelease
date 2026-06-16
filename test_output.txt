@@ -1,0 +1,42 @@
+============================================================
+TEST 1: All Packages in Database
+============================================================
+Total packages: 13
+
+- Heavenly Kashmir: 6 Days / 5 Nights - INR 95,000
+- Magical Istanbul: 6 Days / 5 Nights - INR 125,000
+- Magical Manali: 5 Days / 4 Nights - INR 127,500
+- Royal Jaipur: 5 Days / 4 Nights - INR 153,000
+- Dubai Skyline & Desert: 6 Days / 5 Nights - INR 185,000
+- New York City Lights: 5 Days / 4 Nights - INR 204,000
+- Mystical Mexico: 7 Days / 6 Nights - INR 215,000
+- Tokyo Tech & Tradition: 8 Days / 7 Nights - INR 238,000
+- Parisian Romance: 6 Days / 5 Nights - INR 263,500
+- California Dreamin': 9 Days / 8 Nights - INR 289,000
+- Santorini Sunset Bliss: 6 Days / 5 Nights - INR 306,000
+- Safari in Serengeti: 7 Days / 6 Nights - INR 357,000
+- Australian Adventure: 10 Days / 9 Nights - INR 382,500
+
+============================================================
+TEST 2: Detailed Package Formatting
+============================================================
+Example: - Heavenly Kashmir | 6 Days / 5 Nights | INR 95,000 | Top spots: Dal Lake, Gulmarg Gondola, Betaab Valley
+
+============================================================
+TEST 3: Fallback Chat Reply
+============================================================
+I can help with package details, pricing, booking steps, payment flow, and transport options. Ask something like: 'best package for Goa', 'how to book for 3 travellers', or 'train vs flight cost'.
+
+============================================================
+TEST 4: DB Chat Reply - List Packages
+============================================================
+All packages (sorted by price): Heavenly Kashmir (6 Days / 5 Nights) - INR 95000; Magical Istanbul (6 Days / 5 Nights) - INR 125000; Magical Manali (5 Days / 4 Nights) - INR 127500; Royal Jaipur (5 Days / 4 Nights) - INR 153000; Dubai Skyline & Desert (6 Days / 5 Nights) - INR 185000; New York City Lights (5 Days / 4 Nights) - INR 204000; Mystical Mexico (7 Days / 6 Nights) - INR 215000; Tokyo Tech & Tradition (8 Days / 7 Nights) - INR 238000; Parisian Romance (6 Days / 5 Nights) - INR 263500; C...
+
+============================================================
+TEST 5: DB Chat Reply - Budget Query
+============================================================
+Found 3 package(s) under INR 150000: Heavenly Kashmir (6 Days / 5 Nights) - INR 95000; Magical Istanbul (6 Days / 5 Nights) - INR 125000; Magical Manali (5 Days / 4 Nights) - INR 127500
+
+============================================================
+ALL TESTS PASSED!
+============================================================
